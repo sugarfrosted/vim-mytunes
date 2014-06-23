@@ -36,4 +36,4 @@ noremap ,xh :py itunes_prev()<enter>
 noremap ,xl :py itunes_next()<enter>
 noremap ,xj :py itunes_volup()<enter>
 noremap ,xk :py itunes_next()<enter>
-noremap 'xt :py itunes_getTrackName<enter>
+noremap ,xt :py itunes_getTrackName()<enter>
