@@ -1,18 +1,33 @@
-thon << endpython
-
-import os
+python << endpython
+from subprocess import check_output
+def volume_delta(delta):
+    current_level = int(check_output("""osascript -e 'tell application "itunes" to return sound volume'""", shell=True))
+    if current_level + delta < 0:
+        volume_level = 0
+    elif current_level + delta > 100:
+        volume_level = 100
+    else:
+        volume_level = current_level + delta
+    volume_level = str(volume_level)
+    check_output("""osascript -e 'tell application "itunes" to set sound volume to """ + volume_level + "'", shell=True)
 def itunes_stop():
-    os.system("""osascript -e 'tell application "itunes" to stop'""")
+    check_output("""osascript -e 'tell application "itunes" to stop'""", shell=True)
 def itunes_play():
-    os.system("""osascript -e 'tell application "itunes" to play'""")
-    
+    check_output("""osascript -e 'tell application "itunes" to play'""", shell=True)
 def itunes_next():
-    os.system("""osascript -e 'tell application "itunes" to next track'""")
+    check_output("""osascript -e 'tell application "itunes" to next track'""", shell=True)
 def itunes_prev():
-    os.system("""osascript -e 'tell application "itunes" to previous track'""")
+    check_output("""osascript -e 'tell application "itunes" to previous track'""", shell=True)
+def itunes_volup():
+    volume_delta(20)
+def itunes_voldown():
+    volume_delta(-20)
+    
 endpython
 
-map ,xs :py itunes_stop()<enter>
-map ,xp :py itunes_play()<enter>
-map ,x, :py itunes_prev()<enter>
-map ,x. :py itunes_next()<enter>
+noremap ,xs :py itunes_stop()<enter>
+noremap ,xp :py itunes_play()<enter>
+noremap ,xh :py itunes_prev()<enter>
+noremap ,xl :py itunes_next()<enter>
+noremap ,xj :py itunes_volup()<enter>
+noremap ,xk :py itunes_next()<enter>
