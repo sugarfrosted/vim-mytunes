@@ -12,6 +12,7 @@ def volume_delta(delta):
     check_output("""osascript -e 'tell application "itunes" to set sound volume to """ + volume_level + "'", shell=True)
 def itunes_stop():
     check_output("""osascript -e 'tell application "itunes" to stop'""", shell=True)
+    print "Playback Stopped"
 def itunes_play():
     check_output("""osascript -e 'tell application "itunes" to playpause'""", shell=True)
     if "playing\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
@@ -20,8 +21,16 @@ def itunes_play():
         print "Currently Paused on: " + currentTrackInfo()
 def itunes_next():
     check_output("""osascript -e 'tell application "itunes" to next track'""", shell=True)
+    if "playing\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
+        print "Currently Playing: " + currentTrackInfo()
+    else:
+        print "Currently Paused on: " + currentTrackInfo()
 def itunes_prev():
     check_output("""osascript -e 'tell application "itunes" to previous track'""", shell=True)
+    if "playing\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
+        print "Currently Playing: " + currentTrackInfo()
+    else:
+        print "Currently Paused on: " + currentTrackInfo()
 def itunes_volup():
     volume_delta(20)
     print "Current volume level: ", currentVolumeLevel() + "%"
@@ -47,6 +56,6 @@ noremap ,xs :py itunes_stop()<enter>
 noremap ,xp :py itunes_play()<enter>
 noremap ,xh :py itunes_prev()<enter>
 noremap ,xl :py itunes_next()<enter>
-noremap ,xj :py itunes_volup()<enter>
-noremap ,xk :py itunes_voldown()<enter>
+noremap ,xk :py itunes_volup()<enter>
+noremap ,xj :py itunes_voldown()<enter>
 noremap ,xt :py itunes_getTrackName()<enter>
