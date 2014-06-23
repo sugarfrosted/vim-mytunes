@@ -14,6 +14,10 @@ def itunes_stop():
     check_output("""osascript -e 'tell application "itunes" to stop'""", shell=True)
 def itunes_play():
     check_output("""osascript -e 'tell application "itunes" to playpause'""", shell=True)
+    if "playing\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
+        print "Currently Playing: " + currentTrackName()
+    else:
+        print "Currently Paused on: " + currentTrackName()
 def itunes_next():
     check_output("""osascript -e 'tell application "itunes" to next track'""", shell=True)
 def itunes_prev():
@@ -22,12 +26,17 @@ def itunes_volup():
     volume_delta(20)
 def itunes_voldown():
     volume_delta(-20)
-def itunes_getTrackName():
+def currentTrackName():
     track_name = check_output("""osascript -e 'tell application "itunes" to return the name of current track'""", shell=True)
     track_artist = check_output("""osascript -e 'tell application "itunes" to return the artist of current track'""", shell=True)
     track_album = check_output("""osascript -e 'tell application "itunes" to return the album of current track'""", shell=True)
-    output = "Nowplaying: " + track_name + " by " + track_artist + " on the album: " + track_album
-    print ''.join(output.splitlines())
+    output = track_name + " by " + track_artist + " on the album: " + track_album
+    return ''.join(output.splitlines())
+def itunes_getTrackName():
+    if "stopped\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
+        print "iTunes is Stopped"
+    else:
+        print "Current Track: " + currentTrackName()
 endpython
 
 noremap ,xs :py itunes_stop()<enter>
