@@ -15,28 +15,32 @@ def itunes_stop():
 def itunes_play():
     check_output("""osascript -e 'tell application "itunes" to playpause'""", shell=True)
     if "playing\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
-        print "Currently Playing: " + currentTrackName()
+        print "Currently Playing: " + currentTrackInfo()
     else:
-        print "Currently Paused on: " + currentTrackName()
+        print "Currently Paused on: " + currentTrackInfo()
 def itunes_next():
     check_output("""osascript -e 'tell application "itunes" to next track'""", shell=True)
 def itunes_prev():
     check_output("""osascript -e 'tell application "itunes" to previous track'""", shell=True)
 def itunes_volup():
     volume_delta(20)
+    print "Current volume level: ", currentVolumeLevel() + "%"
 def itunes_voldown():
     volume_delta(-20)
-def currentTrackName():
+    print "Current volume level: ", currentVolumeLevel() + "%"
+def currentTrackInfo():
     track_name = check_output("""osascript -e 'tell application "itunes" to return the name of current track'""", shell=True)
     track_artist = check_output("""osascript -e 'tell application "itunes" to return the artist of current track'""", shell=True)
     track_album = check_output("""osascript -e 'tell application "itunes" to return the album of current track'""", shell=True)
     output = track_name + " by " + track_artist + " on the album: " + track_album
     return ''.join(output.splitlines())
+def currentVolumeLevel():
+    return "".join(check_output("""osascript -e 'tell app "itunes" to return sound volume'""", shell=True).splitlines())
 def itunes_getTrackName():
     if "stopped\n" == check_output("""osascript -e 'tell application "itunes" to return player state'""", shell=True):
         print "iTunes is Stopped"
     else:
-        print "Current Track: " + currentTrackName()
+        print "Current Track: " + currentTrackInfo()
 endpython
 
 noremap ,xs :py itunes_stop()<enter>
@@ -44,5 +48,5 @@ noremap ,xp :py itunes_play()<enter>
 noremap ,xh :py itunes_prev()<enter>
 noremap ,xl :py itunes_next()<enter>
 noremap ,xj :py itunes_volup()<enter>
-noremap ,xk :py itunes_next()<enter>
+noremap ,xk :py itunes_voldown()<enter>
 noremap ,xt :py itunes_getTrackName()<enter>
