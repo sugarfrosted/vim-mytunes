@@ -53,35 +53,35 @@ if iTunesActive():
             ascript['set_Vol'].run(volume_level)
     def itunes_stop():
         ascript['stop'].run()
-        print "Playback Stopped"
+        print "Playback Stopped",
     def itunes_play():
         ascript['play'].run()
         if "playing" == human_status():
-            print "Currently Playing: " + currentTrackInfo()
+            print "Currently Playing: " + currentTrackInfo(),
         else:
-            print "Currently Paused on: " + currentTrackInfo()
+            print "Currently Paused on: " + currentTrackInfo(),
     def itunes_next():
         ascript['next'].run()
         if "playing" == human_status():
-            print "Currently Playing: " + currentTrackInfo()
+            print "Currently Playing: " + currentTrackInfo(),
         elif "paused" == human_status():
-            print "Currently Paused on: " + currentTrackInfo()
+            print "Currently Paused on: " + currentTrackInfo(),
         elif "stopped" == human_status():
-            print "iTunes is stopped"
+            print "iTunes is stopped",
     def itunes_prev():
         ascript['previous'].run()
         if "playing" == human_status():
-            print "Currently Playing: " + currentTrackInfo()
+            print "Currently Playing: " + currentTrackInfo(),
         elif "paused" == human_status():
-            print "Currently Paused on: " + currentTrackInfo()
+            print "Currently Paused on: " + currentTrackInfo(),
         elif "stopped" == human_status():
-            print "iTunes is stopped"
+            print "iTunes is stopped",
     def itunes_volup():
         volume_delta(20)
-        print "Current volume level:", str(currentVolumeLevel()) + "%"
+        print "Current volume level:", str(currentVolumeLevel()) + "%",
     def itunes_voldown():
         volume_delta(-20)
-        print "Current volume level:", str(currentVolumeLevel()) + "%"
+        print "Current volume level:", str(currentVolumeLevel()) + "%",
     def currentTrackInfo():
         track_name = ascript['name'].run()
         track_artist = ascript['artist'].run()
@@ -92,9 +92,9 @@ if iTunesActive():
         return ascript['get_Vol'].run()
     def itunes_getTrackName():
         if "stopped" == human_status():
-            print "iTunes is Stopped"
+            print "iTunes is Stopped",
         else:
-            print "Current Track: " + currentTrackInfo()
+            print "Current Track: " + currentTrackInfo(),
 endpython
 
 if g:iTunesPlayerActive
