@@ -25,7 +25,13 @@ if iTunesActive():
                'name':AppleScript('tell application "itunes" to return name of current track'),\
                'artist':AppleScript('tell application "itunes" to return artist of current track'),\
                'album':AppleScript('tell application "itunes" to return album of current track'),\
-               'status':AppleScript('tell application "itunes" to return player state')}
+               'status':AppleScript('tell application "itunes" to return player state'),\
+               'finish':AppleScript('tell application "itunes" to return finish of current track'),\
+               'get_Pos':AppleScript('tell application "iTunes" to return player position'),\
+               'set_Pos':AppleScript(\
+                   """on run {New_position}
+                          tell application "itunes" to set player position to New_position
+                      end run""")}
     def human_status():
         status = str(ascript['status'].run())
         if match(r"AEEnum\('.{3}S'\)",status) is not None:
@@ -72,10 +78,10 @@ if iTunesActive():
             print "iTunes is stopped"
     def itunes_volup():
         volume_delta(20)
-        print "Current volume level: ", currentVolumeLevel() + "%"
+        print "Current volume level:", str(currentVolumeLevel()) + "%"
     def itunes_voldown():
         volume_delta(-20)
-        print "Current volume level: ", currentVolumeLevel() + "%"
+        print "Current volume level:", str(currentVolumeLevel()) + "%"
     def currentTrackInfo():
         track_name = ascript['name'].run()
         track_artist = ascript['artist'].run()
