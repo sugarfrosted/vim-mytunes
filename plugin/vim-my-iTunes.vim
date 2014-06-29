@@ -12,7 +12,6 @@ if iTunesActive():
     from re import match
     import vim
     vim.vars["iTunesPlayerActive"] = 1
-    #AppleScript('tell application "itunes" to activate').run()
     ascript = {'get_Vol':AppleScript('tell application "itunes" to return sound volume'), \
                'set_Vol':AppleScript(\
                    """on run {level}
