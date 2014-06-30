@@ -50,6 +50,7 @@ if iTunesActive():
         output  =  timestamp_format(current)
         output += '/'
         output += timestamp_format(finish)
+        return output
 
 
     def timestamp_format(seconds):
@@ -67,7 +68,7 @@ if iTunesActive():
         current = track_time_float()
         finish  = track_end_float()
 
-        new_position = timestamp_add(current+delta)
+        new_position = timestamp_add(current, delta)
         if new_position is None or finish is None:
             print "iTunes is not playing or is playing a stream"
         elif new_position < 0:
@@ -132,6 +133,12 @@ if iTunesActive():
             print "Currently Paused on: " + currentTrackInfo(),
         elif "stopped" == human_status():
             print "iTunes is stopped",
+    def itunes_FF(amount):
+        position_delta(amount)
+        print display_time(),
+    def itunes_RW(amount):
+        position_delta(-amount)
+        print display_time(),
     def itunes_volup():
         volume_delta(20)
         print "Current volume level:", str(currentVolumeLevel()) + "%",
@@ -157,11 +164,13 @@ endpython
 if g:iTunesPlayerActive
     noremap ,ts :py itunes_stop()<enter>
     noremap ,tp :py itunes_play()<enter>
-    noremap ,th :py itunes_prev()<enter>
-    noremap ,tl :py itunes_next()<enter>
+    noremap ,tH :py itunes_prev()<enter>
+    noremap ,tL :py itunes_next()<enter>
     noremap ,tk :py itunes_volup()<enter>
     noremap ,tj :py itunes_voldown()<enter>
     noremap ,tt :py itunes_getTrackName()<enter>
+    noremap ,tl :py itunes_FF(10)<enter>
+    noremap ,th :py itunes_RW(10)<enter>
 else
     noremap ,ts :echo "Requirements Not Installed"<enter>
     noremap ,tp :echo "Requirements Not Installed"<enter>
@@ -170,4 +179,6 @@ else
     noremap ,tk :echo "Requirements Not Installed"<enter>
     noremap ,tj :echo "Requirements Not Installed"<enter>
     noremap ,tt :echo "Requirements Not Installed"<enter>
+    noremap ,tL :echo "Requirements Not Installed"<enter>
+    noremap ,tH :echo "Requirements Not Installed"<enter>
 endif
