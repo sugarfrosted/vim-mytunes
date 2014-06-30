@@ -9,7 +9,9 @@ def iTunesActive():
         return True
 if iTunesActive():
     from applescript import AppleScript
+    import applescript
     from re import match
+    from re import UNICODE
     import vim
     vim.vars["iTunesPlayerActive"] = 1
     ascript = {\
@@ -33,13 +35,13 @@ if iTunesActive():
                   tell application "itunes" to set player position to New_position
               end run""")}
     def track_time_float():
-       if human_status() in ["playing","paused"]:
+       if is_paused() or is_playing():
           return float(ascript["get_Pos"].run())
        else:
           return None
 
     def track_end_float():
-        if human_status() in ["playing","paused"]:
+        if is_paused() or is_playing():
             return float(ascript["finish"].run())
         else:
             return None
@@ -54,15 +56,17 @@ if iTunesActive():
 
 
     def timestamp_format(seconds):
-        seconds = round(seconds)
+        seconds = int(round(seconds))
         m, s = divmod(seconds, 60)
-        h, m = divmod(seconds, 60)
-        if h >= 0:
-            return "%d:%02d:%02d" % (h, m, s)
+        h, m = divmod(m, 60)
+        if h >  0:
+            #return "%d:%02d:%02d" % (h, m, s)
+            return "{0:d}:{1:02d}:{2:02d}".format(h, m, s)
         elif s >= 0:
-            return "d:%02d" % (m, s)
+            #return "%d:%02d" % (m, s)
+            return "{0:d}:{1:02d}".format(m, s)
         else:
-            return "What is time?"
+            return "time is but an illusion"
 
     def position_delta(delta):
         current = track_time_float()
@@ -77,15 +81,41 @@ if iTunesActive():
             ascript["next"].run()
         else:
             ascript["set_Pos"].run(new_position)
-        if human_status() == "playing":
+        if is_playing():
             "Currently Playing: " + currentTrackInfo(),
-        elif human_status() == "paused":
+        elif is_paused():
             "Currently Paused on: " + currentTrackInfo(),
+    
+    def is_paused():
+        state = human_status()
+        if state == "paused":
+            return True
+        else:
+            try:
+                ascript["name"].run()
+            except applescript.ScriptError:
+                return False
+            else:
+                return True
+
+    def is_stopped():
+        state = human_status()
+        if state == "stopped":
+            try:
+                ascript["name"].run()
+            except applescript.ScriptError:
+                return True
+            else:
+                return False
+        else:
+            return False
+    def is_playing():
+        state = human_status()
+        return state == "playing"
 
     def timestamp_add(a,b):
         if a is None or b is None: return None
         else: return a+b
-        
         
 
 
@@ -113,25 +143,25 @@ if iTunesActive():
         print "Playback Stopped",
     def itunes_play():
         ascript['play'].run()
-        if "playing" == human_status():
+        if is_playing():
             print "Currently Playing: " + currentTrackInfo(),
         else:
             print "Currently Paused on: " + currentTrackInfo(),
     def itunes_next():
         ascript['next'].run()
-        if "playing" == human_status():
+        if is_playing():
             print "Currently Playing: " + currentTrackInfo(),
-        elif "paused" == human_status():
+        elif is_paused():
             print "Currently Paused on: " + currentTrackInfo(),
-        elif "stopped" == human_status():
+        elif is_stopped:
             print "iTunes is stopped",
     def itunes_prev():
         ascript['previous'].run()
-        if "playing" == human_status():
+        if is_playing():
             print "Currently Playing: " + currentTrackInfo(),
-        elif "paused" == human_status():
+        elif is_paused():
             print "Currently Paused on: " + currentTrackInfo(),
-        elif "stopped" == human_status():
+        elif is_stopped():
             print "iTunes is stopped",
     def itunes_FF(amount):
         position_delta(amount)
@@ -146,16 +176,22 @@ if iTunesActive():
         volume_delta(-20)
         print "Current volume level:", str(currentVolumeLevel()) + "%",
     def currentTrackInfo():
+        noText = r"^\s*$"
         track_name = ascript['name'].run()
         track_artist = ascript['artist'].run()
+        if match(noText,track_artist):
+            track_artist = "Unknown Artist"
         track_album = ascript['album'].run()
-        output = track_name + " by " + track_artist + " on the album: " + track_album
+        if match(noText,track_album):
+            track_album = "Unknown Album"
+
+        output = track_name + " by " + track_artist + " from: " + track_album
         output += ' ' + display_time()
         return output
     def currentVolumeLevel():
         return ascript['get_Vol'].run()
     def itunes_getTrackName():
-        if "stopped" == human_status():
+        if is_stopped():
             print "iTunes is Stopped",
         else:
             print "Current Track: " + currentTrackInfo(),
