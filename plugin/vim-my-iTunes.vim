@@ -12,25 +12,83 @@ if iTunesActive():
     from re import match
     import vim
     vim.vars["iTunesPlayerActive"] = 1
-    ascript = {'get_Vol':AppleScript('tell application "itunes" to return sound volume'), \
-               'set_Vol':AppleScript(\
-                   """on run {level}
-                          tell application "itunes" to set sound volume to level
-                      end run"""),\
-               'stop':AppleScript('tell application "itunes" to stop'),\
-               'play':AppleScript('tell application "itunes" to playpause'),\
-               'next':AppleScript('tell application "itunes" to next track'),\
-               'previous':AppleScript('tell application "itunes" to previous track'), \
-               'name':AppleScript('tell application "itunes" to return name of current track'),\
-               'artist':AppleScript('tell application "itunes" to return artist of current track'),\
-               'album':AppleScript('tell application "itunes" to return album of current track'),\
-               'status':AppleScript('tell application "itunes" to return player state'),\
-               'finish':AppleScript('tell application "itunes" to return finish of current track'),\
-               'get_Pos':AppleScript('tell application "iTunes" to return player position'),\
-               'set_Pos':AppleScript(\
-                   """on run {New_position}
-                          tell application "itunes" to set player position to New_position
-                      end run""")}
+    ascript = {\
+       'get_Vol':AppleScript('tell application "itunes" to return sound volume'), \
+       'set_Vol':AppleScript(\
+           """on run {level}
+                  tell application "itunes" to set sound volume to level
+              end run"""),\
+       'stop':AppleScript('tell application "itunes" to stop'),\
+       'play':AppleScript('tell application "itunes" to playpause'),\
+       'next':AppleScript('tell application "itunes" to next track'),\
+       'previous':AppleScript('tell application "itunes" to previous track'), \
+       'name':AppleScript('tell application "itunes" to return name of current track'),\
+       'artist':AppleScript('tell application "itunes" to return artist of current track'),\
+       'album':AppleScript('tell application "itunes" to return album of current track'),\
+       'status':AppleScript('tell application "itunes" to return player state'),\
+       'finish':AppleScript('tell application "itunes" to return finish of current track'),\
+       'get_Pos':AppleScript('tell application "iTunes" to return player position'),\
+       'set_Pos':AppleScript(\
+           """on run {New_position}
+                  tell application "itunes" to set player position to New_position
+              end run""")}
+    def track_time_float():
+       if human_status() in ["playing","paused"]:
+          return float(ascript["get_Pos"].run())
+       else:
+          return None
+
+    def track_end_float():
+        if human_status() in ["playing","paused"]:
+            return float(ascript["finish"].run())
+        else:
+            return None
+    def display_time():
+        current = ascript["get_Pos"].run()
+        finish =  ascript["finish"].run()
+        
+        output  =  timestamp_format(current)
+        output += '/'
+        output += timestamp_format(finish)
+        return output
+
+
+    def timestamp_format(seconds):
+        seconds = round(seconds)
+        m, s = divmod(seconds, 60)
+        h, m = divmod(seconds, 60)
+        if h >= 0:
+            return "%d:%02d:%02d" % (h, m, s)
+        elif s >= 0:
+            return "d:%02d" % (m, s)
+        else:
+            return "What is time?"
+
+    def position_delta(delta):
+        current = track_time_float()
+        finish  = track_end_float()
+
+        new_position = timestamp_add(current, delta)
+        if new_position is None or finish is None:
+            print "iTunes is not playing or is playing a stream"
+        elif new_position < 0:
+            ascript["previous"].run()
+        elif new_position > finish: 
+            ascript["next"].run()
+        else:
+            ascript["set_Pos"].run(new_position)
+        if human_status() == "playing":
+            "Currently Playing: " + currentTrackInfo(),
+        elif human_status() == "paused":
+            "Currently Paused on: " + currentTrackInfo(),
+
+    def timestamp_add(a,b):
+        if a is None or b is None: return None
+        else: return a+b
+        
+        
+
+
     def human_status():
         status = str(ascript['status'].run())
         if match(r"AEEnum\('.{3}S'\)",status) is not None:
@@ -75,6 +133,12 @@ if iTunesActive():
             print "Currently Paused on: " + currentTrackInfo(),
         elif "stopped" == human_status():
             print "iTunes is stopped",
+    def itunes_FF(amount):
+        position_delta(amount)
+        print display_time(),
+    def itunes_RW(amount):
+        position_delta(-amount)
+        print display_time(),
     def itunes_volup():
         volume_delta(20)
         print "Current volume level:", str(currentVolumeLevel()) + "%",
@@ -86,6 +150,7 @@ if iTunesActive():
         track_artist = ascript['artist'].run()
         track_album = ascript['album'].run()
         output = track_name + " by " + track_artist + " on the album: " + track_album
+        output += ' ' + display_time()
         return output
     def currentVolumeLevel():
         return ascript['get_Vol'].run()
@@ -99,11 +164,13 @@ endpython
 if g:iTunesPlayerActive
     noremap ,ts :py itunes_stop()<enter>
     noremap ,tp :py itunes_play()<enter>
-    noremap ,th :py itunes_prev()<enter>
-    noremap ,tl :py itunes_next()<enter>
+    noremap ,tH :py itunes_prev()<enter>
+    noremap ,tL :py itunes_next()<enter>
     noremap ,tk :py itunes_volup()<enter>
     noremap ,tj :py itunes_voldown()<enter>
     noremap ,tt :py itunes_getTrackName()<enter>
+    noremap ,tl :py itunes_FF(10)<enter>
+    noremap ,th :py itunes_RW(10)<enter>
 else
     noremap ,ts :echo "Requirements Not Installed"<enter>
     noremap ,tp :echo "Requirements Not Installed"<enter>
@@ -112,4 +179,6 @@ else
     noremap ,tk :echo "Requirements Not Installed"<enter>
     noremap ,tj :echo "Requirements Not Installed"<enter>
     noremap ,tt :echo "Requirements Not Installed"<enter>
+    noremap ,tL :echo "Requirements Not Installed"<enter>
+    noremap ,tH :echo "Requirements Not Installed"<enter>
 endif
