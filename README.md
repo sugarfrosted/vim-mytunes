@@ -9,7 +9,7 @@ Setting variable `g:mytunesprefix` overrides the default prefix `,t`
 With the default prefix the mapped keys are:
 
 | mapping | function          |
-|*-------*|*----------------- |
+|:-------:|:----------------- |
 | `,tp`   | Play/Pause        |
 | `,ts`   | Stop              |
 | `,tL`   | Next Song         |
