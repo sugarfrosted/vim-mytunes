@@ -1,5 +1,11 @@
 let g:iTunesPlayerActive = 0
 python << endpython
+import sys
+def V2or3print(string):
+    if sys.version_info >= (3, 0):
+        print(string)
+    else:
+        print string
 def iTunesActive():
     try:
         from applescript import AppleScript
@@ -74,7 +80,7 @@ if iTunesActive():
 
         new_position = timestamp_add(current, delta)
         if new_position is None or finish is None:
-            print "iTunes is not playing or is playing a stream"
+            V2or3print("iTunes is not playing or is playing a stream")
         elif new_position < 0:
             ascript["previous"].run()
         elif new_position > finish: 
@@ -82,9 +88,9 @@ if iTunesActive():
         else:
             ascript["set_Pos"].run(new_position)
         if is_playing():
-            "Currently Playing: " + currentTrackInfo(),
+            V2or3print("Currently Playing: " + currentTrackInfo())
         elif is_paused():
-            "Currently Paused on: " + currentTrackInfo(),
+            V2or3print("Currently Paused on: " + currentTrackInfo())
     
     def is_paused():
         state = human_status()
@@ -140,43 +146,43 @@ if iTunesActive():
             ascript['set_Vol'].run(volume_level)
     def itunes_stop():
         ascript['stop'].run()
-        print "Playback Stopped",
+        V2or3print("Playback Stopped")
     def itunes_play():
         ascript['play'].run()
         if is_playing():
-            print "Currently Playing: " + currentTrackInfo(),
+            V2or3print("Currently Playing: " + currentTrackInfo())
         else:
-            print "Currently Paused on: " + currentTrackInfo(),
+            V2or3print("Currently Paused on: " + currentTrackInfo())
     def itunes_next():
         ascript['next'].run()
         if is_playing():
-            print "Currently Playing: " + currentTrackInfo(),
+            V2or3print("Currently Playing: " + currentTrackInfo())
         elif is_paused():
-            print "Currently Paused on: " + currentTrackInfo(),
+            V2or3print("Currently Paused on: " + currentTrackInfo())
         elif is_stopped:
-            print "iTunes is stopped",
+            V2or3print("iTunes is stopped")
     def itunes_prev():
         ascript['previous'].run()
         if is_playing():
-            print "Currently Playing: " + currentTrackInfo(),
+            V2or3print("Currently Playing: " + currentTrackInfo())
         elif is_paused():
-            print "Currently Paused on: " + currentTrackInfo(),
+            V2or3print("Currently Paused on: " + currentTrackInfo())
         elif is_stopped():
-            print "iTunes is stopped",
+            V2or3print("iTunes is stopped")
     def itunes_FF(amount):
         amount = int(amount)
         position_delta(amount)
-        print display_time(),
+        V2or3print(display_time())
     def itunes_RW(amount):
         amount = int(amount)
         position_delta(-amount)
-        print display_time(),
+        V2or3print(display_time())
     def itunes_volup():
         volume_delta(20)
-        print "Current volume level:", str(currentVolumeLevel()) + "%",
+        V2or3print("Current volume level:", str(currentVolumeLevel()) + "%")
     def itunes_voldown():
         volume_delta(-20)
-        print "Current volume level:", str(currentVolumeLevel()) + "%",
+        V2or3print("Current volume level:", str(currentVolumeLevel()) + "%")
     def currentTrackInfo():
         noText = r"^\s*$"
         track_name = ascript['name'].run()
@@ -194,9 +200,9 @@ if iTunesActive():
         return ascript['get_Vol'].run()
     def itunes_getTrackName():
         if is_stopped():
-            print "iTunes is Stopped",
+            V2or3print("iTunes is Stopped")
         else:
-            print "Current Track: " + currentTrackInfo(),
+            V2or3print("Current Track: " + currentTrackInfo())
 endpython
 function! MyTunesMaps(...)
     if len(a:000) >= 1
@@ -206,6 +212,7 @@ function! MyTunesMaps(...)
             let g:mytunesprefix = ',t'
         endif
     endif
+    let g:mytuneserror = 'Requirements Not Installed' "putting quotation will end poorly.
     if g:iTunesPlayerActive
         exe "noremap " . g:mytunesprefix . "s :py itunes_stop()<enter>"
         exe "noremap " . g:mytunesprefix . "p :py itunes_play()<enter>"
@@ -223,21 +230,21 @@ function! MyTunesMaps(...)
         exe "noremap " . g:mytunesprefix . "66l :py itunes_FF(300)<enter>"
         exe "noremap " . g:mytunesprefix . "66h :py itunes_RW(300)<enter>"
     else
-        exe "noremap " . g:mytunesprefix . "s :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "p :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "h :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "l :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "k :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "j :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "t :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "L :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "H :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "3l :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "3h :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "6l :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "6h :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "66l :echo 'Requirements Not Installed'<enter>"
-        exe "noremap " . g:mytunesprefix . "66h :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "s :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "p :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "h :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "l :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "k :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "j :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "t :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "L :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "H :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "3l :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "3h :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "6l :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "6h :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "66l :echo '" . g:mytuneserror . "'<enter>"
+        exe "noremap " . g:mytunesprefix . "66h :echo '" . g:mytuneserror . "'<enter>"
     endif
 endfunction
 call MyTunesMaps()
