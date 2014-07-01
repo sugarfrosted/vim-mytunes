@@ -4,7 +4,8 @@ Requires vim with python2.7 on MacOSX, because plot.
 
 Also requires the module applescript, which can be found at: https://pypi.python.org/pypi/py-applescript/1.0.0
 
-Setting variable `g:mytunesprefix` in the .vimrc file overrides the default prefix `,t` or if already started use the command `call MyTunesMaps('string')`
+Setting variable `g:mytunesprefix` in the .vimrc file overrides the default prefix `,t` or if already started use the command 
+`call MyTunesMaps('string')`
 
 With the default prefix the mapped keys are:
 
