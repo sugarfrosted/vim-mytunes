@@ -1,11 +1,5 @@
 let g:iTunesPlayerActive = 0
 python << endpython
-import sys
-def V2or3print(string):
-    if sys.version_info >= (3, 0):
-        print(string)
-    else:
-        print string
 def iTunesActive():
     try:
         from applescript import AppleScript
@@ -80,7 +74,7 @@ if iTunesActive():
 
         new_position = timestamp_add(current, delta)
         if new_position is None or finish is None:
-            V2or3print("iTunes is not playing or is playing a stream")
+            print("iTunes is not playing or is playing a stream")
         elif new_position < 0:
             ascript["previous"].run()
         elif new_position > finish: 
@@ -88,9 +82,9 @@ if iTunesActive():
         else:
             ascript["set_Pos"].run(new_position)
         if is_playing():
-            V2or3print("Currently Playing: " + currentTrackInfo())
+            print("Currently Playing: " + currentTrackInfo())
         elif is_paused():
-            V2or3print("Currently Paused on: " + currentTrackInfo())
+            print("Currently Paused on: " + currentTrackInfo())
     
     def is_paused():
         state = human_status()
@@ -146,43 +140,43 @@ if iTunesActive():
             ascript['set_Vol'].run(volume_level)
     def itunes_stop():
         ascript['stop'].run()
-        V2or3print("Playback Stopped")
+        print("Playback Stopped")
     def itunes_play():
         ascript['play'].run()
         if is_playing():
-            V2or3print("Currently Playing: " + currentTrackInfo())
+            print("Currently Playing: " + currentTrackInfo())
         else:
-            V2or3print("Currently Paused on: " + currentTrackInfo())
+            print("Currently Paused on: " + currentTrackInfo())
     def itunes_next():
         ascript['next'].run()
         if is_playing():
-            V2or3print("Currently Playing: " + currentTrackInfo())
+            print("Currently Playing: " + currentTrackInfo())
         elif is_paused():
-            V2or3print("Currently Paused on: " + currentTrackInfo())
+            print("Currently Paused on: " + currentTrackInfo())
         elif is_stopped:
-            V2or3print("iTunes is stopped")
+            print("iTunes is stopped")
     def itunes_prev():
         ascript['previous'].run()
         if is_playing():
-            V2or3print("Currently Playing: " + currentTrackInfo())
+            print("Currently Playing: " + currentTrackInfo())
         elif is_paused():
-            V2or3print("Currently Paused on: " + currentTrackInfo())
+            print("Currently Paused on: " + currentTrackInfo())
         elif is_stopped():
-            V2or3print("iTunes is stopped")
+            print("iTunes is stopped")
     def itunes_FF(amount):
         amount = int(amount)
         position_delta(amount)
-        V2or3print(display_time())
+        print(display_time())
     def itunes_RW(amount):
         amount = int(amount)
         position_delta(-amount)
-        V2or3print(display_time())
+        print(display_time())
     def itunes_volup():
         volume_delta(20)
-        V2or3print("Current volume level:", str(currentVolumeLevel()) + "%")
+        print("Current volume level:", str(currentVolumeLevel()) + "%")
     def itunes_voldown():
         volume_delta(-20)
-        V2or3print("Current volume level:", str(currentVolumeLevel()) + "%")
+        print("Current volume level:", str(currentVolumeLevel()) + "%")
     def currentTrackInfo():
         noText = r"^\s*$"
         track_name = ascript['name'].run()
@@ -200,9 +194,9 @@ if iTunesActive():
         return ascript['get_Vol'].run()
     def itunes_getTrackName():
         if is_stopped():
-            V2or3print("iTunes is Stopped")
+            print("iTunes is Stopped")
         else:
-            V2or3print("Current Track: " + currentTrackInfo())
+            print("Current Track: " + currentTrackInfo())
 endpython
 function! MyTunesMaps(...)
     if len(a:000) >= 1
