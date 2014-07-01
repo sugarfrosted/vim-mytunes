@@ -198,37 +198,46 @@ if iTunesActive():
         else:
             print "Current Track: " + currentTrackInfo(),
 endpython
-
-if g:iTunesPlayerActive
-    noremap ,ts :py itunes_stop()<enter>
-    noremap ,tp :py itunes_play()<enter>
-    noremap ,tH :py itunes_prev()<enter>
-    noremap ,tL :py itunes_next()<enter>
-    noremap ,tk :py itunes_volup()<enter>
-    noremap ,tj :py itunes_voldown()<enter>
-    noremap ,tt :py itunes_getTrackName()<enter>
-    noremap ,tl :py itunes_FF(10)<enter>
-    noremap ,th :py itunes_RW(10)<enter>
-    noremap ,t3l :py itunes_FF(60)<enter>
-    noremap ,t3h :py itunes_RW(60)<enter>
-    noremap ,t6l :py itunes_FF(60)<enter>
-    noremap ,t6h :py itunes_RW(60)<enter>
-    noremap ,t66l :py itunes_FF(300)<enter>
-    noremap ,t66h :py itunes_RW(300)<enter>
-else
-    noremap ,ts :echo "Requirements Not Installed"<enter>
-    noremap ,tp :echo "Requirements Not Installed"<enter>
-    noremap ,th :echo "Requirements Not Installed"<enter>
-    noremap ,tl :echo "Requirements Not Installed"<enter>
-    noremap ,tk :echo "Requirements Not Installed"<enter>
-    noremap ,tj :echo "Requirements Not Installed"<enter>
-    noremap ,tt :echo "Requirements Not Installed"<enter>
-    noremap ,tL :echo "Requirements Not Installed"<enter>
-    noremap ,tH :echo "Requirements Not Installed"<enter>
-    noremap ,t3l :echo "Requirements Not Installed"<enter>
-    noremap ,t3h :echo "Requirements Not Installed"<enter>
-    noremap ,t6l :echo "Requirements Not Installed"<enter>
-    noremap ,t6h :echo "Requirements Not Installed"<enter>
-    noremap ,t66l :echo "Requirements Not Installed"<enter>
-    noremap ,t66h :echo "Requirements Not Installed"<enter>
-endif
+function! MyTunesMaps(...)
+    if len(a:000) >= 1
+        let g:mytunesprefix = a:000[0]
+    else
+        if !exists('g:mytunesprefix')
+            let g:mytunesprefix = ',t'
+        endif
+    endif
+    if g:iTunesPlayerActive
+        exe "noremap " . g:mytunesprefix . "s :py itunes_stop()<enter>"
+        exe "noremap " . g:mytunesprefix . "p :py itunes_play()<enter>"
+        exe "noremap " . g:mytunesprefix . "H :py itunes_prev()<enter>"
+        exe "noremap " . g:mytunesprefix . "L :py itunes_next()<enter>"
+        exe "noremap " . g:mytunesprefix . "k :py itunes_volup()<enter>"
+        exe "noremap " . g:mytunesprefix . "j :py itunes_voldown()<enter>"
+        exe "noremap " . g:mytunesprefix . "t :py itunes_getTrackName()<enter>"
+        exe "noremap " . g:mytunesprefix . "l :py itunes_FF(10)<enter>"
+        exe "noremap " . g:mytunesprefix . "h :py itunes_RW(10)<enter>"
+        exe "noremap " . g:mytunesprefix . "3l :py itunes_FF(60)<enter>"
+        exe "noremap " . g:mytunesprefix . "3h :py itunes_RW(60)<enter>"
+        exe "noremap " . g:mytunesprefix . "6l :py itunes_FF(60)<enter>"
+        exe "noremap " . g:mytunesprefix . "6h :py itunes_RW(60)<enter>"
+        exe "noremap " . g:mytunesprefix . "66l :py itunes_FF(300)<enter>"
+        exe "noremap " . g:mytunesprefix . "66h :py itunes_RW(300)<enter>"
+    else
+        exe "noremap " . g:mytunesprefix . "s :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "p :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "h :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "l :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "k :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "j :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "t :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "L :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "H :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "3l :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "3h :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "6l :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "6h :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "66l :echo 'Requirements Not Installed'<enter>"
+        exe "noremap " . g:mytunesprefix . "66h :echo 'Requirements Not Installed'<enter>"
+    endif
+endfunction
+call MyTunesMaps()
