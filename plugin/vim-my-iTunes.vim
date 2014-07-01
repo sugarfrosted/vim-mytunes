@@ -164,9 +164,11 @@ if iTunesActive():
         elif is_stopped():
             print "iTunes is stopped",
     def itunes_FF(amount):
+        amount = int(amount)
         position_delta(amount)
         print display_time(),
     def itunes_RW(amount):
+        amount = int(amount)
         position_delta(-amount)
         print display_time(),
     def itunes_volup():
@@ -207,6 +209,12 @@ if g:iTunesPlayerActive
     noremap ,tt :py itunes_getTrackName()<enter>
     noremap ,tl :py itunes_FF(10)<enter>
     noremap ,th :py itunes_RW(10)<enter>
+    noremap ,t3l :py itunes_FF(60)<enter>
+    noremap ,t3h :py itunes_RW(60)<enter>
+    noremap ,t6l :py itunes_FF(60)<enter>
+    noremap ,t6h :py itunes_RW(60)<enter>
+    noremap ,t66l :py itunes_FF(300)<enter>
+    noremap ,t66h :py itunes_RW(300)<enter>
 else
     noremap ,ts :echo "Requirements Not Installed"<enter>
     noremap ,tp :echo "Requirements Not Installed"<enter>
@@ -217,4 +225,10 @@ else
     noremap ,tt :echo "Requirements Not Installed"<enter>
     noremap ,tL :echo "Requirements Not Installed"<enter>
     noremap ,tH :echo "Requirements Not Installed"<enter>
+    noremap ,t3l :echo "Requirements Not Installed"<enter>
+    noremap ,t3h :echo "Requirements Not Installed"<enter>
+    noremap ,t6l :echo "Requirements Not Installed"<enter>
+    noremap ,t6h :echo "Requirements Not Installed"<enter>
+    noremap ,t66l :echo "Requirements Not Installed"<enter>
+    noremap ,t66h :echo "Requirements Not Installed"<enter>
 endif
