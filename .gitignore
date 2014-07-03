@@ -1,3 +1,4 @@
 ~*
 *.sw[g-p]
 2B*.py*
+*.pickle

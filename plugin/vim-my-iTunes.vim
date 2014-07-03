@@ -1,4 +1,5 @@
 let g:iTunesPlayerActive = 0
+let g:MyTunesScriptPath = expand('<sfile>:p')
 python << endpython
 def iTunesActive():
     try:
@@ -12,8 +13,20 @@ if iTunesActive():
     import applescript
     from re import match
     from re import UNICODE
+    import os
     import vim
     vim.vars["iTunesPlayerActive"] = 1
+    mytunespath = vim.vars["MyTunesScriptPath"]
+    for repetitions in range(2):
+        mytunespath = os.path.split(mytunespath)[0]#strips last path elements
+    
+    mute_file = os.path.join(mytunespath, 'mutestatus.pickle')
+    if not os.path.isfile(mute_file) or os.stat(mute_file).st_size == 0:
+        import pickle
+        mute = open(mute_file,'w')
+        pickle.dump(None, mute)
+        mute.seek(0)
+    mute = open(mute_file,'r+')    
     ascript = {\
        'get_Vol':AppleScript('tell application "itunes" to return sound volume'), \
        'set_Vol':AppleScript(\
@@ -39,6 +52,23 @@ if iTunesActive():
           return float(ascript["get_Pos"].run())
        else:
           return None
+    def mute_iTunes():
+        import pickle
+        volLVL = ascript["get_Vol"].run()
+        muteSTATS = pickle.load(mute)
+        mute.seek(0)
+        if muteSTATS is None:
+            muteSTATS = ascript['get_Vol'].run()
+            pickle.dump(muteSTATS, mute)
+            mute.seek(0)
+            ascript['set_Vol'].run(0)
+            print "muted"
+        else:
+            ascript['set_Vol'].run(muteSTATS)
+            muteSTATS = None
+            pickle.dump(muteSTATS, mute)
+            mute.seek(0)
+            print "muted"
 
     def track_end_float():
         if is_paused() or is_playing():
