@@ -17,6 +17,7 @@ With the default prefix the mapped keys are:
 | `,tL`   | Next Song         |
 | `,tH`   | Previous Song     |
 | `,tt`   | Show Track Info   |
+| `,tm`   | Mute iTunes       |
 | `,tj`   | Volume Down(20)   |
 | `,tk`   | Volume Up(20)     |
 | `,tl`   | Skip forward 10s  |

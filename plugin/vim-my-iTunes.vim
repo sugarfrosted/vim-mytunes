@@ -15,6 +15,7 @@ if iTunesActive():
     from re import UNICODE
     import os
     import vim
+    import pickle
     vim.vars["iTunesPlayerActive"] = 1
     mytunespath = vim.vars["MyTunesScriptPath"]
     for repetitions in range(2):
@@ -22,7 +23,6 @@ if iTunesActive():
     
     mute_file = os.path.join(mytunespath, 'mutestatus.pickle')
     if not os.path.isfile(mute_file) or os.stat(mute_file).st_size == 0:
-        import pickle
         mute = open(mute_file,'w')
         pickle.dump(None, mute)
         mute.seek(0)
@@ -52,7 +52,7 @@ if iTunesActive():
           return float(ascript["get_Pos"].run())
        else:
           return None
-    def mute_iTunes():
+    def iTunes_mute():
         import pickle
         volLVL = ascript["get_Vol"].run()
         muteSTATS = pickle.load(mute)
@@ -68,7 +68,17 @@ if iTunesActive():
             muteSTATS = None
             pickle.dump(muteSTATS, mute)
             mute.seek(0)
-            print "muted"
+            print "unmuted"
+    def is_Muted():
+        import pickle
+        if pickle.load(mute) is None:
+            return True
+        else:
+            return False
+
+    def unmute(volume):
+        pickle.dump(volume, mute)
+        mute.seek(0)
 
     def track_end_float():
         if is_paused() or is_playing():
@@ -160,7 +170,13 @@ if iTunesActive():
         else:
             return "OH GOD WHAT HAS SCIENCE DONE"
     def volume_delta(delta):
+        import pickle
+        mutedvol = pickle.load(mute)
+        mute.seek(0)
+
         current_level = int(ascript['get_Vol'].run())
+        if current_level == 0 and mutedvol is not None:
+            current_level = mutedvol
         if current_level + delta < 0:
             volume_level = 0
         elif current_level + delta > 100:
@@ -168,6 +184,10 @@ if iTunesActive():
         else:
             volume_level = current_level + delta
             ascript['set_Vol'].run(volume_level)
+        if mutedvol is None:
+            pickle.dump(volume_level, mute)
+            mute.seek(0)
+        
     def itunes_stop():
         ascript['stop'].run()
         print("Playback Stopped")
@@ -238,6 +258,7 @@ function! MyTunesMaps(...)
     endif
     let g:mytuneserror = 'Requirements Not Installed' "putting quotation will end poorly.
     if g:iTunesPlayerActive
+        exe "noremap " . g:mytunesprefix . "m :py iTunes_mute()<enter>"
         exe "noremap " . g:mytunesprefix . "s :py itunes_stop()<enter>"
         exe "noremap " . g:mytunesprefix . "p :py itunes_play()<enter>"
         exe "noremap " . g:mytunesprefix . "H :py itunes_prev()<enter>"
@@ -254,6 +275,7 @@ function! MyTunesMaps(...)
         exe "noremap " . g:mytunesprefix . "66l :py itunes_FF(300)<enter>"
         exe "noremap " . g:mytunesprefix . "66h :py itunes_RW(300)<enter>"
     else
+        exe "noremap " . g:mytunesprefix . "m :echo '" . g:mytuneserror . "'<enter>"
         exe "noremap " . g:mytunesprefix . "s :echo '" . g:mytuneserror . "'<enter>"
         exe "noremap " . g:mytunesprefix . "p :echo '" . g:mytuneserror . "'<enter>"
         exe "noremap " . g:mytunesprefix . "h :echo '" . g:mytuneserror . "'<enter>"
